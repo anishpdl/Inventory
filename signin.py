@@ -206,6 +206,50 @@ terms_check.place(x=30, y=370)
 # -----------------------------
 # Sign Up Button
 # -----------------------------
+def signin():
+    Firstname=fname_entry.get()
+    Lastname=lname_entry.get()
+    emails=email_entry.get()
+    phone_number=phone_entry.get()
+    password=password_entry.get()
+    check=range(1,20)
+    global img
+    if  Firstname=="Enter your First  Name" or Lastname=="Last  Name" or  phone_number=="Phone Number" or emails=="Enter Your Email" or password=="Create Password":
+        messagebox.showinfo("Error","Please fill all the form")
+    elif phone_number.isdigit()==False:
+        messagebox.showerror("Error","Enter a Number(Phone Number)")
+    elif len(phone_number)!=10:
+        messagebox.showerror("Error","Enter a Valid Phone Number")
+    elif "@" not in emails or emails.endswith(".com")==False:
+        messagebox.showerror("Error","Enter a Valid Email")
+    else:
+        messagebox.showinfo("Message","Your ID has been created.")
+        ruj=sqlite3.connect("signup.db")
+        r=ruj.cursor()
+
+        r.execute("""CREATE TABLE IF NOT EXISTS sign (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            phone_number TEXT NOT NULL,
+            email TEXT NOT NULL UNIQUE,
+            password TEXT NOT NULL
+        )""")
+
+        try:
+            r.execute("""
+                    INSERT INTO sign (first_name, last_name, phone_number, email, password)
+                    VALUES (?, ?, ?, ?, ?)
+                    """, (Firstname, Lastname,  phone_number, emails, password))
+            ruj.commit()
+            ruj.close()
+        except Exception as e:
+            messagebox.showerror("Error",e)
+            
+        project.destroy()
+        runpy.run_path(
+            "final_login.py")
+ 
 
 btn_font = font.Font(size=12, weight="bold")
 sign_up_button = Button(frame, text="Sign up", width=12,
