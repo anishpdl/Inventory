@@ -46,3 +46,12 @@ def leave(i):
     btn['background']="#57a1f8"
 btn.bind('<Enter>',enter)
 btn.bind('<Leave>',leave)
+
+img=ImageTk.PhotoImage(Image.open(r"AccuResult.png"))
+image=Label(image=img,bg="white").place(x=50,y=(screen_height/4)+25)
+
+frame=Frame(project,width=450,height=550,bg="white",highlightthickness=2,highlightbackground="black")
+frame.place(x=screen_width-550,y=screen_height/7)
+
+heading=Label(frame,text='Sign Up',fg="#57a1f8",bg="white",font=("Arial",30))
+heading.place(x=160,y=1)
