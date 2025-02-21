@@ -15,7 +15,7 @@ screen_height= project.winfo_screenheight()
 #creating title bar
 a=Frame(project,width=screen_width,height=35,bg="#57a1f8").place(x=0,y=0)
 title=Label(a, text="AccuResult",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
-img=Image.open(r"logo.png") #image logo
+img=Image.open(r"assets/logo.png") #image logo
 img=img.resize((30,30))
 new_logo=ImageTk.PhotoImage(img)
 image=Label(image=new_logo,border=0,bg="#57a1f8").place(x=5,y=3)
@@ -52,7 +52,7 @@ btn.bind('<Leave>',leave)
 def back():
     project.destroy()
     runpy.run_path(
-        "final_base.py")
+        "base.py")
 btn4=Button(project,text="<<",width=4,bg="#57a1f8",border=0,font=buttonFont,command=back)
 btn4.place(x=screen_width-150,y=0)
 def enter(i):
@@ -65,7 +65,7 @@ btn4.bind('<Leave>',leave)
 
 #Inserting picture
 
-img = Image.open(r"sideimg.png")
+img = Image.open(r"assets/sideimg.png")
 img = img.resize((700, 500))
 img = ImageTk.PhotoImage(img)
 Label(image=img, bg="white").place(x=600, y=180)
