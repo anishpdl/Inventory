@@ -201,21 +201,63 @@ def leave(i):
 btn.bind('<Enter>',enter)
 btn.bind('<Leave>',leave)
 
+def logout():
+    main_app.destroy()  # Close the application (you can redirect to login page instead)
+    print("User logged out!")
+    runpy.run_path('login.py')
+
+# ==== User Profile Frame ====
+profile_frame = tk.Frame(main_app, bg="white", bd=2, relief=tk.RIDGE)
+profile_frame.place(x=screen_width-200, y=40, width=180, height=60)  # Adjust position as needed
+profile_frame.lift()
+
+# Load Profile Image
+try:
+    profile_img = Image.open("assets/logo.png")  # Ensure the image path is correct
+except:
+    profile_img = Image.open("logo.png")  # Fallback default image
+
+profile_img = profile_img.resize((40, 40))  # Resize image
+profile_photo = ImageTk.PhotoImage(profile_img)
+
+# Profile Image Label
+img_label = tk.Label(profile_frame, image=profile_photo, bg="white")
+img_label.place(x=10, y=10)
+
+# Username Label
+username_label = tk.Label(profile_frame, text="Anish Poudel", font=("Arial", 10, "bold"), bg="white", fg="black")
+username_label.place(x=60, y=15)
+
+# Logout Button
+logout_btn =tk.Button(main_app, text="Logout", bg="red", fg="white", font=("Arial", 10), border=0, cursor="hand2", command=logout)
+logout_btn.place(x=screen_width-130, y=100)
+
+# Hover Effect
+def on_enter(e):
+    logout_btn.config(bg="darkred")
+
+def on_leave(e):
+    logout_btn.config(bg="red")
+
+logout_btn.bind("<Enter>", on_enter)
+logout_btn.bind("<Leave>", on_leave)
 
 # Input Section
 input_frame = tk.Frame(main_app, padx=20, pady=10, bg="#e1f5fe")
 input_frame.pack(fill=tk.X, pady=10)
-
+input_frame.lower()
 # Item Name
 tk.Label(input_frame, text="Item Name", bg="#e1f5fe", font=("Arial", 12)).grid(row=0, column=0, padx=10, sticky="w")
 item_name_input = tk.Entry(input_frame, font=("Arial", 12))
 item_name_input.grid(row=0, column=1, padx=10, pady=5)
+item_name_input.lower()
 
 # Category
 tk.Label(input_frame, text="Category", bg="#e1f5fe", font=("Arial", 12)).grid(row=1, column=0, padx=10, sticky="w")
 category_dropdown = ttk.Combobox(input_frame, values=["Electronics", "Clothing", "Food", "Other"], state="readonly", font=("Arial", 12))
 category_dropdown.grid(row=1, column=1, padx=10, pady=5)
 category_dropdown.current(0)
+category_dropdown.lower()
 
 # Quantity
 tk.Label(input_frame, text="Quantity", bg="#e1f5fe", font=("Arial", 12)).grid(row=2, column=0, padx=10, sticky="w")
@@ -260,6 +302,9 @@ tk.Button(button_frame, text="Search", command=search_inventory_items, bg="#64b5
 treeview_style = ttk.Style()
 treeview_style.configure("Treeview", background="#ffffff", rowheight=30, font=("Arial", 12))
 treeview_style.configure("Treeview.Heading", background="#64b5f6", foreground="black", font=("Arial", 13, "bold"))
+treeview_style.configure("evenrow", background="lightblue")
+treeview_style.configure("oddrow", background="white")
+
 
 columns = ("ID", "Item", "Category", "Quantity", "Cost", "Supplier", "Date Added")
 inventory_table = ttk.Treeview(main_app, columns=columns, show="headings", style="Treeview")
