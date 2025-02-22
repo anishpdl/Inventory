@@ -142,7 +142,7 @@ def signin():
         ayu.close()
         project.destroy()
         # Open next page
-        runpy.run_path('test.py')
+        runpy.run_path('dashboard1.py')
     else:
         messagebox.showerror("Error", "Invalid information")
 
