@@ -15,6 +15,7 @@ screen_height= project.winfo_screenheight()
 #creating title bar
 a=Frame(project,width=screen_width,height=35,bg="#57a1f8").place(x=0,y=0)
 title=Label(a, text="Cloud Inventory",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
+
 img=Image.open(r"assets/logo.png") #image logo
 img=img.resize((30,30))
 new_logo=ImageTk.PhotoImage(img)
