@@ -12,7 +12,7 @@ project.attributes("-fullscreen",True)
  
 #creating title bar
 a=Frame(project,width=1550,height=35,bg="#57a1f8").place(x=0,y=0)
-title=Label(a, text="AccuResult",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
+title=Label(a, text="Cloud Inventory",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
 img=Image.open(r"assets/sideimg.png") #image logo
 img=img.resize((30,30))
 new_logo=ImageTk.PhotoImage(img)
