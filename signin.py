@@ -248,7 +248,7 @@ def signin():
             
         project.destroy()
         runpy.run_path(
-            "final_login.py")
+            "login.py")
  
 
 btn_font = font.Font(size=12, weight="bold")

@@ -142,6 +142,7 @@ def signin():
         ayu.close()
         project.destroy()
         # Open next page
+        runpy.run_path('test.py')
     else:
         messagebox.showerror("Error", "Invalid information")
 
@@ -149,8 +150,14 @@ def signin():
 login_btn = Button(frame2, text="Log In", bg="black", fg="white", width=37, pady=7, border=0, font=("Arial", 12), command=signin)
 login_btn.place(x=70, y=300)
 
+# signup Function
+def signup():
+    project.destroy()
+    # Open next page
+    runpy.run_path('signin.py')
+
 # Signup Redirect
 Label(frame2, text="Not Register yet?", fg="black", bg="white", font=("Arial", 10)).place(x=130, y=360)
-signup_btn = Button(frame2, text="Contact Us!!", border=0, bg="white", cursor="hand2", fg="blue", font=("Arial", 10))
+signup_btn = Button(frame2, text="Contact Us!!", border=0, bg="white", cursor="hand2", fg="blue", font=("Arial", 10),command=signup)
 signup_btn.place(x=230, y=360)
 project.mainloop()
