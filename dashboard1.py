@@ -1,6 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from PIL import ImageTk,Image
 import sqlite3
+import tkinter.font as font
+import runpy
 from datetime import datetime
 
 def create_database_connection():
@@ -152,9 +155,52 @@ def log_inventory_activity(action, item_id, old_value, new_value):
 main_app = tk.Tk()
 main_app.title("Inventory Management System")
 main_app.geometry("1920x1080")
+main_app.attributes("-fullscreen",True)
 main_app.configure(bg="#e1f5fe")  # Light blue background
 
+screen_width = main_app.winfo_screenwidth()
+screen_height= main_app.winfo_screenheight()
+
 initialize_database()
+
+
+#creating title bar
+a=tk.Frame(main_app,width=screen_width,height=35,bg="#57a1f8").place(x=0,y=0)
+title=tk.Label(a, text="Cloud Inventory",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
+
+img=Image.open(r"assets/logo.png") #image logo
+img=img.resize((30,30))
+new_logo=ImageTk.PhotoImage(img)
+image=tk.Label(image=new_logo,border=0,bg="#57a1f8").place(x=5,y=3)
+label1=tk.LabelFrame(main_app,height=35,fg="blue",bg="#57a1f8").place(x=0,y=0)
+buttonFont = font.Font(size=14)
+buttonFont1 = font.Font(size=13)
+
+#making maximize and minimize button manually
+def min():
+    main_app.iconify()
+def on_enter(i):
+    btn2['background']="red"
+def on_leave(i):
+    btn2['background']="#57a1f8"
+def max():
+    msg_box =messagebox.askquestion('Exit Application', 'Are you sure you want to close the application?',icon='warning')
+    if msg_box == 'yes':
+        main_app.destroy()
+
+btn2=tk.Button(a,text="✕", command=max,width=4,bg="#57a1f8",border=0,font=buttonFont)
+btn2.pack(anchor="ne")
+btn2.bind('<Enter>',on_enter)
+btn2.bind('<Leave>',on_leave)
+btn=tk.Button(a,text="-", command=min,width=4,bg="#57a1f8",border=0,font=buttonFont)
+btn.place(x=screen_width-100,y=0)
+def enter(i):
+    btn['background']="red"
+def leave(i):
+    btn['background']="#57a1f8"
+btn.bind('<Enter>',enter)
+btn.bind('<Leave>',leave)
+
 
 # Input Section
 input_frame = tk.Frame(main_app, padx=20, pady=10, bg="#e1f5fe")
