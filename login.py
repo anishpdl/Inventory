@@ -2,6 +2,7 @@ from tkinter import*
 from tkinter import messagebox
 import tkinter.font as font
 from PIL import ImageTk,Image
+import config
 import runpy
 import sqlite3
 
@@ -53,7 +54,7 @@ btn.bind('<Leave>',leave)
 def back():
     project.destroy()
     runpy.run_path(
-        "base.py")
+        "signin.py")
 btn4=Button(project,text="<<",width=4,bg="#57a1f8",border=0,font=buttonFont,command=back)
 btn4.place(x=screen_width-150,y=0)
 def enter(i):
@@ -131,6 +132,7 @@ Label(frame2, text="Forgot Password?", fg="blue", bg="white", cursor="hand2", fo
 # Login Function
 def signin():
     username = user.get()
+    config.logged_user = username.split("@")[0]  # Store only the part before '@'
     password = code.get()
     ayu = sqlite3.connect("signup.db")
     a = ayu.cursor()
