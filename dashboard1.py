@@ -4,6 +4,7 @@ from PIL import ImageTk,Image
 import sqlite3
 import tkinter.font as font
 import runpy
+import config
 from datetime import datetime
 
 def create_database_connection():
@@ -225,7 +226,7 @@ img_label = tk.Label(profile_frame, image=profile_photo, bg="white")
 img_label.place(x=10, y=10)
 
 # Username Label
-username_label = tk.Label(profile_frame, text="Anish Poudel", font=("Arial", 10, "bold"), bg="white", fg="black")
+username_label = tk.Label(profile_frame, text=config.logged_user, font=("Arial", 10, "bold"), bg="white", fg="black")
 username_label.place(x=60, y=15)
 
 # Logout Button
