@@ -40,11 +40,11 @@ def initialize_database():
 
 def add_new_inventory_item():
     try:
-        name = item_name_input.get()
-        category = category_dropdown.get()
-        quantity = int(quantity_input.get())
-        price = float(price_input.get())
-        supplier = supplier_input.get()
+        name = name.get()
+        category = category.get()
+        quantity = int(quantity.get())
+        price = float(price.get())
+        supplier = supplier.get()
 
         connection = create_database_connection()
         cursor = connection.cursor()
@@ -113,7 +113,7 @@ def refresh_inventory_list():
     #     inventory_table.insert("", "end", values=row)
 
 def search_inventory_items():
-    search_query = search_box.get().lower()
+    search_query = search_btn.get().lower()
 
     connection = create_database_connection()
     cursor = connection.cursor()
@@ -174,171 +174,182 @@ def log_inventory_activity(action, item_id, old_value, new_value):
     connection.commit()
     connection.close()
 
-# GUI SETUP
+# Create main window
 main_app = tk.Tk()
 main_app.title("Inventory Management System")
 main_app.geometry("1920x1080")
-main_app.attributes("-fullscreen",True)
-main_app.configure(bg="#e1f5fe")  # Light blue background
+main_app.attributes("-fullscreen", True)
+main_app.configure(bg="#f7fafc")  # Very light background
 
+# Get screen dimensions
 screen_width = main_app.winfo_screenwidth()
-screen_height= main_app.winfo_screenheight()
+screen_height = main_app.winfo_screenheight()
 
-initialize_database()
+# ================= Header Section ==================
+header_frame = tk.Frame(main_app, bg="#34495e", height=65)
+header_frame.pack(side=tk.TOP, fill=tk.X)
 
+# Logo in Header
+try:
+    logo_img = Image.open(r"assets/logo.png")
+except Exception as e:
+    logo_img = Image.open("logo.png")
+logo_img = logo_img.resize((55, 55))
+logo_photo = ImageTk.PhotoImage(logo_img)
+logo_label = tk.Label(header_frame, image=logo_photo, bg="#34495e")
+logo_label.pack(side=tk.LEFT, padx=20, pady=5)
 
-#creating title bar
-a=tk.Frame(main_app,width=screen_width,height=35,bg="#57a1f8").place(x=0,y=0)
-title=tk.Label(a, text="Cloud Inventory",font=("Comic Sans MS",15,"bold"), bg="#57a1f8").place(x=36,y=0)
+# Title in Header
+title_label = tk.Label(header_frame, text="Cloud Inventory", font=("Comic Sans MS", 24, "bold"), bg="#34495e", fg="white")
+title_label.pack(side=tk.LEFT, padx=10)
 
-img=Image.open(r"assets/logo.png") #image logo
-img=img.resize((30,30))
-new_logo=ImageTk.PhotoImage(img)
-image=tk.Label(image=new_logo,border=0,bg="#57a1f8").place(x=5,y=3)
-label1=tk.LabelFrame(main_app,height=35,fg="blue",bg="#57a1f8").place(x=0,y=0)
-buttonFont = font.Font(size=14)
-buttonFont1 = font.Font(size=13)
+# Header Buttons (Minimize & Close)
+buttonFont = font.Font(size=18, weight="bold")
 
-#making maximize and minimize button manually
-def min():
+def minimize_app():
     main_app.iconify()
-def on_enter(i):
-    btn2['background']="red"
-def on_leave(i):
-    btn2['background']="#57a1f8"
-def max():
-    msg_box =messagebox.askquestion('Exit Application', 'Are you sure you want to close the application?',icon='warning')
-    if msg_box == 'yes':
+
+def close_app():
+    if messagebox.askquestion('Exit Application', 'Are you sure you want to close the application?', icon='warning') == 'yes':
         main_app.destroy()
 
-btn2=tk.Button(a,text="✕", command=max,width=4,bg="#57a1f8",border=0,font=buttonFont)
-btn2.pack(anchor="ne")
-btn2.bind('<Enter>',on_enter)
-btn2.bind('<Leave>',on_leave)
-btn=tk.Button(a,text="-", command=min,width=4,bg="#57a1f8",border=0,font=buttonFont)
-btn.place(x=screen_width-100,y=0)
-def enter(i):
-    btn['background']="red"
-def leave(i):
-    btn['background']="#57a1f8"
-btn.bind('<Enter>',enter)
-btn.bind('<Leave>',leave)
+min_btn = tk.Button(header_frame, text="-", command=minimize_app, bg="#34495e", fg="white", bd=0, font=buttonFont,
+                    activebackground="#2c3e50", activeforeground="white", cursor="hand2")
+min_btn.pack(side=tk.RIGHT, padx=10, pady=10)
 
+close_btn = tk.Button(header_frame, text="✕", command=close_app, bg="#34495e", fg="white", bd=0, font=buttonFont,
+                      activebackground="#e74c3c", activeforeground="white", cursor="hand2")
+close_btn.pack(side=tk.RIGHT, padx=10, pady=10)
+
+# ================= Profile and Logout Section ==================
+profile_frame = tk.Frame(main_app, bg="white", bd=2, relief=tk.RIDGE)
+profile_frame.place(x=screen_width-260, y=80, width=240, height=90)
+
+# Profile Image
+try:
+    profile_img = Image.open("assets/logo.png")
+except Exception as e:
+    profile_img = Image.open("logo.png")
+profile_img = profile_img.resize((65, 65))
+profile_photo = ImageTk.PhotoImage(profile_img)
+profile_img_label = tk.Label(profile_frame, image=profile_photo, bg="white")
+profile_img_label.grid(row=0, column=0, padx=10, pady=10)
+
+# Username Label
+username_label = tk.Label(profile_frame, text=config.logged_user, font=("Arial", 16, "bold"), bg="white", fg="#34495e")
+username_label.grid(row=0, column=1, padx=5, sticky="w")
+
+# Logout Button with Hover Effect
 def logout():
-    main_app.destroy()  # Close the application (you can redirect to login page instead)
+    main_app.destroy()
     print("User logged out!")
     runpy.run_path('login.py')
 
-# ==== User Profile Frame ====
-profile_frame = tk.Frame(main_app, bg="white", bd=2, relief=tk.RIDGE)
-profile_frame.place(x=screen_width-200, y=40, width=180, height=60)  # Adjust position as needed
-profile_frame.lift()
+def on_logout_enter(e):
+    logout_btn.config(bg="#c0392b")
+def on_logout_leave(e):
+    logout_btn.config(bg="#e74c3c")
 
-# Load Profile Image
-try:
-    profile_img = Image.open("assets/logo.png")  # Ensure the image path is correct
-except:
-    profile_img = Image.open("logo.png")  # Fallback default image
+logout_btn = tk.Button(main_app, text="Logout", bg="#e74c3c", fg="white", font=("Arial", 16, "bold"), bd=0, cursor="hand2", command=logout)
+logout_btn.place(x=screen_width-180, y=180)
+logout_btn.bind("<Enter>", on_logout_enter)
+logout_btn.bind("<Leave>", on_logout_leave)
 
-profile_img = profile_img.resize((40, 40))  # Resize image
-profile_photo = ImageTk.PhotoImage(profile_img)
+# ================= Sidebar (Navigation) ==================
+sidebar_frame = tk.Frame(main_app, bg="#2ecc71", width=260)
+sidebar_frame.place(x=0, y=65, height=screen_height-65)
 
-# Profile Image Label
-img_label = tk.Label(profile_frame, image=profile_photo, bg="white")
-img_label.place(x=10, y=10)
+# Sidebar Title
+sidebar_title = tk.Label(sidebar_frame, text="Navigation", bg="#27ae60", fg="white", font=("Arial", 18, "bold"))
+sidebar_title.pack(pady=(20, 10), fill=tk.X)
 
-# Username Label
-username_label = tk.Label(profile_frame, text=config.logged_user, font=("Arial", 10, "bold"), bg="white", fg="black")
-username_label.place(x=60, y=15)
+# Example navigation button(s) for Sidebar
+def dummy_nav():
+    messagebox.showinfo("Navigation", "This feature is under development.")
 
-# Logout Button
-logout_btn =tk.Button(main_app, text="Logout", bg="red", fg="white", font=("Arial", 10), border=0, cursor="hand2", command=logout)
-logout_btn.place(x=screen_width-130, y=100)
+nav_buttons = [("Dashboard", dummy_nav), ("Inventory", dummy_nav), ("Orders", dummy_nav), ("Reports", dummy_nav)]
+for text, command in nav_buttons:
+    btn = tk.Button(sidebar_frame, text=text, font=("Arial", 16), bg="#2ecc71", fg="white", bd=0, relief=tk.FLAT, cursor="hand2", command=command)
+    btn.pack(pady=10, fill=tk.X, padx=20)
+    # Hover effects for sidebar buttons
+    btn.bind("<Enter>", lambda e, b=btn: b.config(bg="#27ae60"))
+    btn.bind("<Leave>", lambda e, b=btn: b.config(bg="#2ecc71"))
 
-# Hover Effect
-def on_enter(e):
-    logout_btn.config(bg="darkred")
+# ================= Main Content Area ==================
+content_frame = tk.Frame(main_app, bg="#f7fafc")
+content_frame.place(x=270, y=80, width=screen_width-280, height=screen_height-90)
 
-def on_leave(e):
-    logout_btn.config(bg="red")
+# ---------------- Input Section ----------------
+input_frame = tk.LabelFrame(content_frame, text="Item Details", padx=25, pady=25, bg="#f7fafc", font=("Arial", 16, "bold"), fg="#34495e", bd=2, relief=tk.GROOVE)
+input_frame.pack(fill=tk.X, padx=30, pady=20)
 
-logout_btn.bind("<Enter>", on_enter)
-logout_btn.bind("<Leave>", on_leave)
+# Arrange Input Labels and Entries using grid layout
+labels = ["Item Name", "Category", "Quantity", "Price", "Supplier", "Search"]
+entries = {}
 
-# Input Section
-input_frame = tk.Frame(main_app, padx=20, pady=10, bg="#e1f5fe")
-input_frame.pack(fill=tk.X, pady=10)
-input_frame.lower()
-# Item Name
-tk.Label(input_frame, text="Item Name", bg="#e1f5fe", font=("Arial", 12)).grid(row=0, column=0, padx=10, sticky="w")
-item_name_input = tk.Entry(input_frame, font=("Arial", 12))
-item_name_input.grid(row=0, column=1, padx=10, pady=5)
-item_name_input.lower()
+for idx, label in enumerate(labels):
+    tk.Label(input_frame, text=label, font=("Arial", 14), bg="#f7fafc", fg="#34495e").grid(row=idx, column=0, sticky="w", padx=10, pady=8)
+    if label == "Category":
+        combo = ttk.Combobox(input_frame, values=["Electronics", "Clothing", "Food", "Other"], state="readonly", font=("Arial", 14))
+        combo.grid(row=idx, column=1, padx=10, pady=8, sticky="ew")
+        combo.current(0)
+        entries[label] = combo
+    else:
+        ent = tk.Entry(input_frame, font=("Arial", 14))
+        ent.grid(row=idx, column=1, padx=10, pady=8, sticky="ew")
+        entries[label] = ent
 
-# Category
-tk.Label(input_frame, text="Category", bg="#e1f5fe", font=("Arial", 12)).grid(row=1, column=0, padx=10, sticky="w")
-category_dropdown = ttk.Combobox(input_frame, values=["Electronics", "Clothing", "Food", "Other"], state="readonly", font=("Arial", 12))
-category_dropdown.grid(row=1, column=1, padx=10, pady=5)
-category_dropdown.current(0)
-category_dropdown.lower()
+input_frame.grid_columnconfigure(1, weight=1)
 
-# Quantity
-tk.Label(input_frame, text="Quantity", bg="#e1f5fe", font=("Arial", 12)).grid(row=2, column=0, padx=10, sticky="w")
-quantity_input = tk.Entry(input_frame, font=("Arial", 12))
-quantity_input.grid(row=2, column=1, padx=10, pady=5)
+# ---------------- Button Panel ----------------
+button_frame = tk.Frame(content_frame, bg="#f7fafc")
+button_frame.pack(pady=15)
 
-# Price
-tk.Label(input_frame, text="Price", bg="#e1f5fe", font=("Arial", 12)).grid(row=3, column=0, padx=10, sticky="w")
-price_input = tk.Entry(input_frame, font=("Arial", 12))
-price_input.grid(row=3, column=1, padx=10, pady=5)
+btn_config = {"font": ("Arial", 16), "padx": 20, "pady": 12, "fg": "white", "bd": 0, "cursor": "hand2"}
 
-# Supplier
-tk.Label(input_frame, text="Supplier", bg="#e1f5fe", font=("Arial", 12)).grid(row=4, column=0, padx=10, sticky="w")
-supplier_input = tk.Entry(input_frame, font=("Arial", 12))
-supplier_input.grid(row=4, column=1, padx=10, pady=5)
+add_item_btn = tk.Button(button_frame, text="Add Item", command=add_new_inventory_item, bg="#1abc9c", **btn_config)
+add_item_btn.grid(row=0, column=0, padx=15)
 
-# Search Box
-tk.Label(input_frame, text="Search", bg="#e1f5fe", font=("Arial", 12)).grid(row=5, column=0, padx=10, sticky="w")
-search_box = tk.Entry(input_frame, font=("Arial", 12))
-search_box.grid(row=5, column=1, padx=10, pady=5)
+delete_item_btn = tk.Button(button_frame, text="Delete Item", command=remove_inventory_item, bg="#e74c3c", **btn_config)
+delete_item_btn.grid(row=0, column=1, padx=15)
 
-# Button Panel
-button_frame = tk.Frame(main_app, bg="#e1f5fe")
-button_frame.pack(pady=20)
+stats_btn = tk.Button(button_frame, text="Show Stats", command=display_inventory_statistics, bg="#3498db", **btn_config)
+stats_btn.grid(row=0, column=2, padx=15)
 
-# Add Item Button
-tk.Button(button_frame, text="Add Item", command=add_new_inventory_item, bg="#4caf50", fg="white", font=("Arial", 12), padx=10, pady=10).grid(row=0, column=0, padx=10)
+low_stock_btn = tk.Button(button_frame, text="Low Stock Alert", command=check_for_low_stock, bg="#f39c12", **btn_config)
+low_stock_btn.grid(row=0, column=3, padx=15)
 
-# Delete Item Button
-tk.Button(button_frame, text="Delete Item", command=remove_inventory_item, bg="#f44336", fg="white", font=("Arial", 12), padx=10, pady=10).grid(row=0, column=1, padx=10)
+search_btn = tk.Button(button_frame, text="Search", command=search_inventory_items, bg="#9b59b6", **btn_config)
+search_btn.grid(row=1, column=0, columnspan=4, pady=15)
 
-# Show Stats Button
-tk.Button(button_frame, text="Show Stats", command=display_inventory_statistics, bg="#2196f3", fg="white", font=("Arial", 12), padx=10, pady=10).grid(row=0, column=2, padx=10)
+# ---------------- Inventory Table ----------------
+table_frame = tk.Frame(content_frame, bg="white", bd=2, relief=tk.RIDGE)
+table_frame.pack(fill=tk.BOTH, expand=True, padx=30, pady=20)
 
-# Low Stock Alert Button
-tk.Button(button_frame, text="Low Stock Alert", command=check_for_low_stock, bg="#ff9800", fg="white", font=("Arial", 12), padx=10, pady=10).grid(row=0, column=3, padx=10)
-
-# Search Button
-tk.Button(button_frame, text="Search", command=search_inventory_items, bg="#64b5f6", fg="white", font=("Arial", 12), padx=10, pady=10).grid(row=1, column=0, columnspan=4, pady=10)
-
-# Treeview for Inventory Table
-treeview_style = ttk.Style()
-treeview_style.configure("Treeview", background="#ffffff", rowheight=30, font=("Arial", 12))
-treeview_style.configure("Treeview.Heading", background="#64b5f6", foreground="black", font=("Arial", 13, "bold"))
-treeview_style.configure("evenrow", background="lightblue")
-treeview_style.configure("oddrow", background="white")
-
+# Ttk Treeview styling for a modern look
+style = ttk.Style()
+style.theme_use("clam")
+style.configure("Treeview",
+                background="white",
+                foreground="black",
+                rowheight=35,
+                fieldbackground="white",
+                font=("Arial", 14))
+style.configure("Treeview.Heading",
+                background="#3498db",
+                foreground="white",
+                font=("Arial", 15, "bold"))
+style.map("Treeview", background=[("selected", "#d1ecf1")])
 
 columns = ("SN", "Item", "Category", "Quantity", "Cost", "Supplier", "Date Added")
-inventory_table = ttk.Treeview(main_app, columns=columns, show="headings", style="Treeview")
-inventory_table.pack(fill=tk.BOTH, padx=20, pady=20)
+inventory_table = ttk.Treeview(table_frame, columns=columns, show="headings")
+inventory_table.pack(fill=tk.BOTH, expand=True)
 
-# Set up column headers
 for col in columns:
     inventory_table.heading(col, text=col)
-    inventory_table.column(col, width=120)
+    inventory_table.column(col, width=150, anchor="center")
 
-# Initial inventory load
+# Load initial inventory data
 refresh_inventory_list()
 
 main_app.mainloop()
