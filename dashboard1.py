@@ -120,7 +120,7 @@ def refresh_inventory_list():
     #     inventory_table.insert("", "end", values=row)
 
 def search_inventory_items():
-    search_query = search_btn.get().lower()
+    search_query = search_btn.get()
 
     connection = create_database_connection()
     cursor = connection.cursor()
@@ -230,7 +230,8 @@ close_btn.pack(side=tk.RIGHT, padx=10, pady=10)
 
 # ================= Profile and Logout Section ==================
 profile_frame = tk.Frame(main_app, bg="white", bd=2, relief=tk.RIDGE)
-profile_frame.place(x=screen_width-260, y=80, width=240, height=90)
+profile_frame.place(x=screen_width-260, y=180, width=240, height=90)
+profile_frame.lift()
 
 # Profile Image
 try:
@@ -285,10 +286,12 @@ for text, command in nav_buttons:
 # ================= Main Content Area ==================
 content_frame = tk.Frame(main_app, bg="#f7fafc")
 content_frame.place(x=270, y=80, width=screen_width-280, height=screen_height-90)
+content_frame.lower()
 
 # ---------------- Input Section ----------------
 input_frame = tk.LabelFrame(content_frame, text="Item Details", padx=25, pady=25, bg="#f7fafc", font=("Arial", 16, "bold"), fg="#34495e", bd=2, relief=tk.GROOVE)
 input_frame.pack(fill=tk.X, padx=30, pady=20)
+input_frame.lower()
 
 # Arrange Input Labels and Entries using grid layout
 labels = ["Item Name", "Category", "Quantity", "Price", "Supplier", "Search"]
