@@ -40,26 +40,33 @@ def initialize_database():
 
 def add_new_inventory_item():
     try:
-        name = name.get()
-        category = category.get()
-        quantity = int(quantity.get())
-        price = float(price.get())
-        supplier = supplier.get()
+        name = entries["Item Name"].get()
+        category = entries["Category"].get()
+        quantity = int(entries["Quantity"].get())
+        price = float(entries["Price"].get())
+        supplier = entries["Supplier"].get()
+
+        # Ensure logged_user is not None or empty
+        if not config.logged_user:
+            raise ValueError("User not logged in. Please log in first.")
 
         connection = create_database_connection()
         cursor = connection.cursor()
         cursor.execute("""
-            INSERT INTO inventory_items (item_name, item_category, stock_quantity, item_price, supplier_info,user)
+            INSERT INTO inventory_items (item_name, item_category, stock_quantity, item_price, supplier_info, user)
             VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, category, quantity, price, supplier,config.logged_user))
+        """, (name, category, quantity, price, supplier, config.logged_user))
         connection.commit()
         connection.close()
 
         log_inventory_activity("ADD", None, None, f"Added: {name} with {quantity} units")
         messagebox.showinfo("Success", f"{name} has been successfully added to inventory!")
         refresh_inventory_list()
+    except ValueError as ve:
+        messagebox.showerror("User Error", str(ve))
     except Exception as error:
         messagebox.showerror("Error", f"An error occurred while adding the item: {error}")
+
 
 def remove_inventory_item():
     selected_item = inventory_table.selection()
