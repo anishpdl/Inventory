@@ -21,7 +21,8 @@ def initialize_database():
             stock_quantity INTEGER NOT NULL,
             item_price REAL NOT NULL,
             supplier_info TEXT,
-            date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            user TEXT NOT NULL
         )
     """)
     cursor.execute("""
@@ -48,9 +49,9 @@ def add_new_inventory_item():
         connection = create_database_connection()
         cursor = connection.cursor()
         cursor.execute("""
-            INSERT INTO inventory_items (item_name, item_category, stock_quantity, item_price, supplier_info)
-            VALUES (?, ?, ?, ?, ?)
-        """, (name, category, quantity, price, supplier))
+            INSERT INTO inventory_items (item_name, item_category, stock_quantity, item_price, supplier_info,user)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (name, category, quantity, price, supplier,config.logged_user))
         connection.commit()
         connection.close()
 
@@ -65,8 +66,16 @@ def remove_inventory_item():
     if not selected_item:
         messagebox.showwarning("Selection Error", "Please select an item to delete.")
         return
+    
+    item_details = inventory_table.item(selected_item)
 
-    item_id = inventory_table.item(selected_item)['values'][0]
+    item_name = item_details['values'][1]
+     
+    connection = sqlite3.connect('inventory_data.db') 
+    cursor = connection.cursor()
+    cursor.execute("SELECT id FROM inventory_items WHERE item_name = ?", (item_name,))
+    result = cursor.fetchone()
+    item_id=result[0]
 
     connection = create_database_connection()
     cursor = connection.cursor()
@@ -77,7 +86,7 @@ def remove_inventory_item():
     if item:
         connection = create_database_connection()
         cursor = connection.cursor()
-        cursor.execute("DELETE FROM inventory_items WHERE id = ?", (item_id,))
+        cursor.execute("DELETE FROM inventory_items WHERE id = ? AND user = ?", (item_id,config.logged_user))
         connection.commit()
         connection.close()
 
@@ -91,32 +100,45 @@ def refresh_inventory_list():
 
     connection = create_database_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM inventory_items")
+    cursor.execute("SELECT item_name, item_category, stock_quantity, item_price, supplier_info, date_added FROM inventory_items WHERE user = ?", (config.logged_user,))
     rows = cursor.fetchall()
     connection.close()
 
-    for row in rows:
-        inventory_table.insert("", "end", values=row)
+
+    # Insert rows with Serial Number
+    for sn, row in enumerate(rows, start=1):  # SN starts from 1
+        inventory_table.insert("", "end", values=(sn, *row))
+
+    # for row in rows:
+    #     inventory_table.insert("", "end", values=row)
 
 def search_inventory_items():
     search_query = search_box.get().lower()
 
     connection = create_database_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM inventory_items WHERE item_name LIKE ?", ('%' + search_query + '%',))
+    cursor.execute("SELECT id, item_name, item_category, stock_quantity, item_price, supplier_info, date_added FROM inventory_items WHERE item_name LIKE ? AND user = ?", ('%' + search_query + '%', config.logged_user))
     rows = cursor.fetchall()
     connection.close()
 
+    # Clear previous entries
     for row in inventory_table.get_children():
         inventory_table.delete(row)
-    for row in rows:
-        inventory_table.insert("", "end", values=row)
+
+    # Insert the new search results
+    for sn, row in enumerate(rows, start=1):  # SN starts from 1
+        item_id, item_name, item_category, stock_quantity, item_price, supplier_info, date_added = row
+        # Insert values, including date_added
+        inventory_table.insert("", "end", values=(sn, item_name, item_category, stock_quantity, item_price, supplier_info, date_added)) 
+
+
+
 
 def check_for_low_stock():
     low_stock_threshold = 5
     connection = create_database_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT item_name, stock_quantity FROM inventory_items WHERE stock_quantity < ?", (low_stock_threshold,))
+    cursor.execute("SELECT item_name, stock_quantity FROM inventory_items WHERE stock_quantity < ? AND user = ?", (low_stock_threshold,config.logged_user))
     low_stock_items = cursor.fetchall()
     connection.close()
 
@@ -129,7 +151,7 @@ def check_for_low_stock():
 def display_inventory_statistics():
     connection = create_database_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT item_category, SUM(stock_quantity) FROM inventory_items GROUP BY item_category")
+    cursor.execute("SELECT item_category, SUM(stock_quantity) FROM inventory_items WHERE user = ? GROUP BY item_category", (config.logged_user,))
     stats = cursor.fetchall()
     connection.close()
 
@@ -307,7 +329,7 @@ treeview_style.configure("evenrow", background="lightblue")
 treeview_style.configure("oddrow", background="white")
 
 
-columns = ("ID", "Item", "Category", "Quantity", "Cost", "Supplier", "Date Added")
+columns = ("SN", "Item", "Category", "Quantity", "Cost", "Supplier", "Date Added")
 inventory_table = ttk.Treeview(main_app, columns=columns, show="headings", style="Treeview")
 inventory_table.pack(fill=tk.BOTH, padx=20, pady=20)
 
