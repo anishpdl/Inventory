@@ -230,7 +230,7 @@ close_btn.pack(side=tk.RIGHT, padx=10, pady=10)
 
 # ================= Profile and Logout Section ==================
 profile_frame = tk.Frame(main_app, bg="white", bd=2, relief=tk.RIDGE)
-profile_frame.place(x=screen_width-260, y=180, width=240, height=90)
+profile_frame.place(x=1240, y=screen_height-870, width=200, height=75)
 profile_frame.lift()
 
 # Profile Image
@@ -238,7 +238,7 @@ try:
     profile_img = Image.open("assets/logo.png")
 except Exception as e:
     profile_img = Image.open("logo.png")
-profile_img = profile_img.resize((65, 65))
+profile_img = profile_img.resize((50, 50))
 profile_photo = ImageTk.PhotoImage(profile_img)
 profile_img_label = tk.Label(profile_frame, image=profile_photo, bg="white")
 profile_img_label.grid(row=0, column=0, padx=10, pady=10)
@@ -259,7 +259,7 @@ def on_logout_leave(e):
     logout_btn.config(bg="#e74c3c")
 
 logout_btn = tk.Button(main_app, text="Logout", bg="#e74c3c", fg="white", font=("Arial", 16, "bold"), bd=0, cursor="hand2", command=logout)
-logout_btn.place(x=screen_width-180, y=180)
+logout_btn.place(x=screen_width-90, y=70)
 logout_btn.bind("<Enter>", on_logout_enter)
 logout_btn.bind("<Leave>", on_logout_leave)
 
