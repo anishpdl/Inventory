@@ -262,6 +262,7 @@ sign_up_button.place(x=30, y=420)
 # -----------------------------
 def go_to_login():
     runpy.run_path("login.py")
+    print("User Register Successfully")
 
 footer_label = Label(frame, text="Already have an account? ",
                      bg="white", fg="#666", font=("Arial", 10))
