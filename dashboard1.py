@@ -6,6 +6,7 @@ import tkinter.font as font
 import runpy
 import config
 from datetime import datetime
+import subprocess
 
 def create_database_connection():
     return sqlite3.connect("inventory_data.db")
@@ -191,6 +192,7 @@ def log_inventory_activity(action, item_id, old_value, new_value):
 main_app = tk.Tk()
 main_app.title("Inventory Management System")
 main_app.geometry("1920x1080")
+# main_app.overrideredirect(True)
 main_app.attributes("-fullscreen", True)
 main_app.configure(bg="#f7fafc")  # Very light background
 
@@ -281,7 +283,13 @@ sidebar_title.pack(pady=(20, 10), fill=tk.X)
 def nav():
     display_inventory_statistics()
 
-nav_buttons = [("Inventory", nav), ("Reports", nav)]
+
+def reports():
+    subprocess.run(["python", "test.py"])
+
+
+
+nav_buttons = [("Inventory", nav), ("Reports", reports)]
 for text, command in nav_buttons:
     btn = tk.Button(sidebar_frame, text=text, font=("Arial", 16), bg="#2ecc71", fg="white", bd=0, relief=tk.FLAT, cursor="hand2", command=command)
     btn.pack(pady=10, fill=tk.X, padx=20)
