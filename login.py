@@ -145,8 +145,10 @@ def signin():
         project.destroy()
         # Open next page
         runpy.run_path('dashboard1.py')
+        print("Login Sucessfully!!")
     else:
         messagebox.showerror("Error", "Invalid information")
+        print("User Not Found")
 
 # Login Button
 login_btn = Button(frame2, text="Log In", bg="black", fg="white", width=37, pady=7, border=0, font=("Arial", 12), command=signin)
