@@ -69,6 +69,8 @@ def add_new_inventory_item():
         entries["Price"].delete(0, tk.END)
         entries["Supplier"].delete(0, tk.END)
 
+        print("Item Added Successfully")
+
     except ValueError as ve:
         messagebox.showerror("User Error", str(ve))
     except Exception as error:
@@ -104,6 +106,8 @@ def remove_inventory_item():
         connection.commit()
         connection.close()
 
+        print("Item Deleted Successfully")
+
         log_inventory_activity("DELETE", item_id, f"{item[1]}: {item[3]} units", None)
         messagebox.showinfo("Deleted", f"{item[1]} has been removed from the inventory!")
         refresh_inventory_list()
@@ -122,7 +126,7 @@ def refresh_inventory_list():
     # Insert rows with Serial Number
     for sn, row in enumerate(rows, start=1):  # SN starts from 1
         inventory_table.insert("", "end", values=(sn, *row))
-
+    print("Refresh Successfully")
     # for row in rows:
     #     inventory_table.insert("", "end", values=row)
 
@@ -144,6 +148,7 @@ def search_inventory_items():
         item_id, item_name, item_category, stock_quantity, item_price, supplier_info, date_added = row
         # Insert values, including date_added
         inventory_table.insert("", "end", values=(sn, item_name, item_category, stock_quantity, item_price, supplier_info, date_added)) 
+        print("Item Found")
 
 
 
@@ -159,6 +164,7 @@ def check_for_low_stock():
     if low_stock_items:
         alert_message = "\n".join([f"{item[0]}: {item[1]}" for item in low_stock_items])
         messagebox.showwarning("Low Stock Alert", f"The following items have low stock:\n{alert_message}")
+        print("Low Stock Was Shown")
     else:
         messagebox.showinfo("Stock Status", "All items are sufficiently stocked.")
 
@@ -175,6 +181,7 @@ def display_inventory_statistics():
 
     if stats_message:
         messagebox.showinfo("Inventory Statistics", stats_message)
+        print("Statistics is being Shown")
     else:
         messagebox.showinfo("Inventory Statistics", "No data available.")
 
