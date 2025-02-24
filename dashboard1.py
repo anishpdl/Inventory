@@ -285,7 +285,7 @@ def nav():
 
 
 def reports():
-    subprocess.run(["python", "test.py"])
+    subprocess.run(["python", "reports.py"])
 
 
 
