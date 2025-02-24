@@ -225,8 +225,12 @@ def minimize_app():
     main_app.iconify()
 
 def close_app():
-    if messagebox.askquestion('Exit Application', 'Are you sure you want to close the application?', icon='warning') == 'yes':
-        main_app.destroy()
+    global main_app
+    try:
+        if messagebox.askquestion('Exit Application', 'Are you sure you want to close the application?', icon='warning') == 'yes':
+            main_app.destroy()
+    except Exception as e:
+        print("Error closing app:", e)
 
 min_btn = tk.Button(header_frame, text="-", command=minimize_app, bg="#34495e", fg="white", bd=0, font=buttonFont,
                     activebackground="#2c3e50", activeforeground="white", cursor="hand2")
@@ -375,5 +379,11 @@ for col in columns:
 
 # Load initial inventory data
 refresh_inventory_list()
-
-main_app.mainloop()
+try:
+    # Your existing dashboard code
+    main_app.mainloop()
+except Exception as e:
+    print(f"Error in create_dashboard: {e}")
+except KeyboardInterrupt:
+    print("Program interrupted. Exiting...")
+    main_app.quit()  # Gracefully exit Tkinter mainloop
