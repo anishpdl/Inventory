@@ -62,6 +62,12 @@ def add_new_inventory_item():
         log_inventory_activity("ADD", None, None, f"Added: {name} with {quantity} units")
         messagebox.showinfo("Success", f"{name} has been successfully added to inventory!")
         refresh_inventory_list()
+        entries["Item Name"].delete(0, tk.END)
+        entries["Category"].delete(0, tk.END)
+        entries["Quantity"].delete(0, tk.END)
+        entries["Price"].delete(0, tk.END)
+        entries["Supplier"].delete(0, tk.END)
+
     except ValueError as ve:
         messagebox.showerror("User Error", str(ve))
     except Exception as error:
@@ -268,14 +274,14 @@ sidebar_frame = tk.Frame(main_app, bg="#2ecc71", width=260)
 sidebar_frame.place(x=0, y=65, height=screen_height-65)
 
 # Sidebar Title
-sidebar_title = tk.Label(sidebar_frame, text="Navigation", bg="#27ae60", fg="white", font=("Arial", 18, "bold"))
+sidebar_title = tk.Label(sidebar_frame, text="Dashboard", bg="#27ae60", fg="white", font=("Arial", 18, "bold"))
 sidebar_title.pack(pady=(20, 10), fill=tk.X)
 
 # Example navigation button(s) for Sidebar
-def dummy_nav():
-    messagebox.showinfo("Navigation", "This feature is under development.")
+def nav():
+    display_inventory_statistics()
 
-nav_buttons = [("Dashboard", dummy_nav), ("Inventory", dummy_nav), ("Orders", dummy_nav), ("Reports", dummy_nav)]
+nav_buttons = [("Inventory", nav), ("Reports", nav)]
 for text, command in nav_buttons:
     btn = tk.Button(sidebar_frame, text=text, font=("Arial", 16), bg="#2ecc71", fg="white", bd=0, relief=tk.FLAT, cursor="hand2", command=command)
     btn.pack(pady=10, fill=tk.X, padx=20)
